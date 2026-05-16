@@ -16,14 +16,6 @@
 
 <br />
 
-<!-- 2. BANNER -->
-
-<p align="center">
-  <img src="ieee_paper/figures/architecture.png" alt="CodeSonar Architecture Banner" width="800" />
-</p>
-
-<br />
-
 <!-- 18. BADGES -->
 
 <p align="center">
@@ -574,13 +566,7 @@ See the [open issues](https://github.com/Rohanranga/3d-repo-analyser/issues) for
 
 ## Research Paper
 
-This project is backed by a published **IEEE research paper**:
-
-> **CodeSonar: An AI-Driven Platform for GitHub Repository Comprehension Using RAG**
->
-> *Karnala Akaniksha, Kommu Tharun Kumar, Ajmeera Rakesh Kumar, Ranga Rohan, Baswapathiruni Krishna Kumar, S. Ramchandra Reddy*
->
-> Department of CSE (AI & ML), Nalla Malla Reddy Engineering College, Hyderabad, India
+This project is backed by a published **IEEE research paper**: *"CodeSonar: An AI-Driven Platform for GitHub Repository Comprehension Using RAG"*
 
 The full paper is available in [`ieee_paper/index.html`](ieee_paper/index.html).
 
@@ -601,20 +587,11 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 | | Link |
 |---|------|
 | **GitHub** | [github.com/Rohanranga/3d-repo-analyser](https://github.com/Rohanranga/3d-repo-analyser) |
+| **Portfolio** | [ranga-rohan.vercel.app](https://ranga-rohan.vercel.app/) |
 | **Custom GPT** | [CodeSonar Project Explainer](https://chatgpt.com/g/g-69f0670003f881919c845ae67d7dfd4e-codesonar-project-explainer) |
-| **IEEE Paper** | [`ieee_paper/index.html`](ieee_paper/index.html) |
 | **Issues** | [Report a bug or request a feature](https://github.com/Rohanranga/3d-repo-analyser/issues) |
 
-### Team
-
-| Name | Role | Contact |
-|------|------|---------|
-| Karnala Akaniksha | Developer | karnalaakaniksha11@nmrec.edu.in |
-| Kommu Tharun Kumar | Developer | tharun28k@gmail.com |
-| Ajmeera Rakesh Kumar | Developer | ajmeerarakeshkumar@gmail.com |
-| Ranga Rohan | Developer | uniquerohankumar@gmail.com |
-| Baswapathiruni Krishna Kumar | Guide | krishnakumar.cse@nmrec.edu.in |
-| S. Ramchandra Reddy | Guide | rcreddy79@gmail.com |
+**Built and maintained by [Ranga Rohan](https://ranga-rohan.vercel.app/)**
 
 ---
 
