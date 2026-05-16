@@ -157,6 +157,7 @@ export default function Home() {
           <div className="flex flex-col items-center gap-6">
             <div className="relative p-4 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-sm shadow-xl shadow-indigo-500/5">
               <QRCode
+                value="https://chatgpt.com/"
                 size={180}
                 fgColor="#e0e7ff"
                 bgColor="#0a0a1a"
