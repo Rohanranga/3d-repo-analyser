@@ -124,63 +124,63 @@ CodeSonar combines **AI-driven code intelligence** with **interactive 3D visuali
 ### Hero Landing Page
 
 <p align="center">
-  <img src="codesonar%20dashboard/main%20ui%20.png" alt="CodeSonar Hero Landing Page" width="800" />
+  <img src="screenshots/hero-landing.png" alt="CodeSonar Hero Landing Page" width="800" />
 </p>
 <p align="center"><em>AI-Powered Code Analysis -- paste a GitHub URL and get instant insights with the animated 3D Spline robot scene</em></p>
 
 ### Analysis Pipeline
 
 <p align="center">
-  <img src="codesonar%20dashboard/laoding%20screen.png" alt="Analysis Loading Screen" width="800" />
+  <img src="screenshots/loading-screen.png" alt="Analysis Loading Screen" width="800" />
 </p>
 <p align="center"><em>Real-time pipeline progress -- fetching files, identifying tech stack, running AI bug detection, and analyzing code quality</em></p>
 
 ### Project Summary
 
 <p align="center">
-  <img src="codesonar%20dashboard/project%20summary.png" alt="Project Summary Dashboard" width="800" />
+  <img src="screenshots/project-summary.png" alt="Project Summary Dashboard" width="800" />
 </p>
 <p align="center"><em>AI-generated project narrative explaining what the project does, its architecture, notable features, and code quality metrics</em></p>
 
 ### Complexity Analysis & Visual Architecture
 
 <p align="center">
-  <img src="codesonar%20dashboard/complexity%20analysis%20and%20visual%20architecture%20diagram%20.png" alt="Complexity Analysis and Architecture Diagram" width="800" />
+  <img src="screenshots/complexity-architecture.png" alt="Complexity Analysis and Architecture Diagram" width="800" />
 </p>
 <p align="center"><em>Complexity scoring (1-10) with total files, lines, and avg lines per file, plus an interactive Mermaid.js architecture diagram</em></p>
 
 ### Auto-Generated Architecture Diagram
 
 <p align="center">
-  <img src="codesonar%20dashboard/architecture-diagram%20(1).jpg" alt="Auto-Generated Architecture Diagram" width="800" />
+  <img src="screenshots/architecture-diagram.jpg" alt="Auto-Generated Architecture Diagram" width="800" />
 </p>
 <p align="center"><em>Downloadable architecture flowchart showing real data flow between UI pages, API routes, components, and core logic modules</em></p>
 
 ### Errors & Warnings
 
 <p align="center">
-  <img src="codesonar%20dashboard/errors%20and%20warnings%20.png" alt="Errors and Warnings Panel" width="800" />
+  <img src="screenshots/errors-warnings.png" alt="Errors and Warnings Panel" width="800" />
 </p>
 <p align="center"><em>Expandable error and warning cards with severity tags, file locations, fix suggestions, and inline code examples</em></p>
 
 ### Tech Stack & Languages
 
 <p align="center">
-  <img src="codesonar%20dashboard/techstack%20and%20languages%20.png" alt="Tech Stack and Languages Table" width="800" />
+  <img src="screenshots/techstack-languages.png" alt="Tech Stack and Languages Table" width="800" />
 </p>
 <p align="center"><em>Full dependency table with current vs. latest version comparison for every package detected in the codebase</em></p>
 
 ### Potential Changes
 
 <p align="center">
-  <img src="codesonar%20dashboard/potential%20changes%20.png" alt="Potential Changes and Improvements" width="800" />
+  <img src="screenshots/potential-changes.png" alt="Potential Changes and Improvements" width="800" />
 </p>
 <p align="center"><em>Actionable improvement suggestions with priority, effort, impact, and file-level targeting -- filterable by category and complexity</em></p>
 
 ### Code Explorer -- Line-by-Line Explanation
 
 <p align="center">
-  <img src="codesonar%20dashboard/code%20explorer%20-%20line%20to%20line%20code%20explaination%20.png" alt="Code Explorer with Line-by-Line Explanation" width="800" />
+  <img src="screenshots/code-explorer.png" alt="Code Explorer with Line-by-Line Explanation" width="800" />
 </p>
 <p align="center"><em>Per-file code viewer with syntax highlighting, AI-generated explanations, source code preview, and file purpose classification</em></p>
 
@@ -193,49 +193,49 @@ The **3D Code Explorer** transforms your codebase into an immersive 3D city wher
 #### Fly Mode
 
 <p align="center">
-  <img src="codesonar%20dashboard/3d%20explorer%20fly%20mode%20.png" alt="3D Explorer Fly Mode" width="800" />
+  <img src="screenshots/3d-fly-mode.png" alt="3D Explorer Fly Mode" width="800" />
 </p>
 <p align="center"><em>Fly through your codebase -- modules, classes, functions, variables, and interfaces are color-coded 3D objects with labeled connections</em></p>
 
 #### Orbit View
 
 <p align="center">
-  <img src="codesonar%20dashboard/orbit%20view%20in%203d%20explorer%20.png" alt="3D Explorer Orbit View" width="800" />
+  <img src="screenshots/3d-orbit-view.png" alt="3D Explorer Orbit View" width="800" />
 </p>
 <p align="center"><em>Orbit mode showing the full project landscape with labeled nodes for every file, function, variable, and class</em></p>
 
 #### Filter by Modules
 
 <p align="center">
-  <img src="codesonar%20dashboard/modules%20present%20in%20the%20code%20.png" alt="3D Explorer - Modules Filter" width="800" />
+  <img src="screenshots/3d-modules.png" alt="3D Explorer - Modules Filter" width="800" />
 </p>
 <p align="center"><em>Filter to show only module-level nodes -- isolate file-level architecture at a glance</em></p>
 
 #### Filter by Functions
 
 <p align="center">
-  <img src="codesonar%20dashboard/functions%20present%20in%20the%20code%20.png" alt="3D Explorer - Functions Filter" width="800" />
+  <img src="screenshots/3d-functions.png" alt="3D Explorer - Functions Filter" width="800" />
 </p>
 <p align="center"><em>Filter to show only functions -- see every exported function and its connections across the codebase</em></p>
 
 #### Filter by Variables
 
 <p align="center">
-  <img src="codesonar%20dashboard/variables%20present%20in%20the%20code%20.png" alt="3D Explorer - Variables Filter" width="800" />
+  <img src="screenshots/3d-variables.png" alt="3D Explorer - Variables Filter" width="800" />
 </p>
 <p align="center"><em>Filter to show only variables -- trace state and data flow through the project</em></p>
 
 #### Filter by Classes
 
 <p align="center">
-  <img src="codesonar%20dashboard/classes%20present%20in%20the%20code%20.png" alt="3D Explorer - Classes Filter" width="800" />
+  <img src="screenshots/3d-classes.png" alt="3D Explorer - Classes Filter" width="800" />
 </p>
 <p align="center"><em>Filter to show only classes -- visualize object-oriented structure and inheritance</em></p>
 
 #### Filter by Interfaces
 
 <p align="center">
-  <img src="codesonar%20dashboard/interface%20of%20code%20.png" alt="3D Explorer - Interfaces Filter" width="800" />
+  <img src="screenshots/3d-interfaces.png" alt="3D Explorer - Interfaces Filter" width="800" />
 </p>
 <p align="center"><em>Filter to show only TypeScript interfaces -- understand the type contracts across the codebase</em></p>
 
@@ -248,21 +248,21 @@ Click any node in the 3D explorer to inspect it in detail with isolated views, c
 #### Node Detail Panel
 
 <p align="center">
-  <img src="codesonar%20dashboard/node%20analysis%20.png" alt="3D Node Analysis Panel" width="800" />
+  <img src="screenshots/3d-node-analysis.png" alt="3D Node Analysis Panel" width="800" />
 </p>
 <p align="center"><em>Isolated node view with AI-generated explanation, line count, complexity score, connection count, step-by-step walkthrough, and usage context</em></p>
 
 #### Error Code Preview & Connections
 
 <p align="center">
-  <img src="codesonar%20dashboard/error%20code%20preview%20and%20its%20connections%20.png" alt="Error Code Preview with Connections" width="800" />
+  <img src="screenshots/3d-error-preview.png" alt="Error Code Preview with Connections" width="800" />
 </p>
 <p align="center"><em>Code preview panel showing source code, connecting dependencies, with options to isolate the node or trace its full execution path</em></p>
 
 #### Error Review with Complexity
 
 <p align="center">
-  <img src="codesonar%20dashboard/error%20review%20with%20its%20complexity%20.png" alt="Error Review with Complexity Metrics" width="800" />
+  <img src="screenshots/3d-error-review.png" alt="Error Review with Complexity Metrics" width="800" />
 </p>
 <p align="center"><em>Function-level inspection showing warning severity, code preview, dependency connections, and per-node complexity scoring</em></p>
 
@@ -273,14 +273,14 @@ Click any node in the 3D explorer to inspect it in detail with isolated views, c
 #### Subscription Plans
 
 <p align="center">
-  <img src="codesonar%20dashboard/private%20repo%20subscriptions%20.png" alt="Private Repo Subscription Plans" width="800" />
+  <img src="screenshots/private-subscriptions.png" alt="Private Repo Subscription Plans" width="800" />
 </p>
 <p align="center"><em>Tiered pricing -- Starter (free), Pro ($12/mo), and Enterprise ($49/mo) with private repo support, deep AI log retention, and priority processing</em></p>
 
 #### Private Analysis Interface
 
 <p align="center">
-  <img src="codesonar%20dashboard/ui%20of%20private%20anlysis%20.png" alt="Private Analysis BYOK Interface" width="800" />
+  <img src="screenshots/private-analysis-ui.png" alt="Private Analysis BYOK Interface" width="800" />
 </p>
 <p align="center"><em>Bring-your-own-key interface -- enter your Gemini API key and GitHub token to analyze private repositories securely. Data never leaves your session.</em></p>
 
@@ -290,7 +290,7 @@ Click any node in the 3D explorer to inspect it in detail with isolated views, c
 
 A full analysis report can be exported as a formatted PDF:
 
-> [CodeSonar Analysis Report (PDF)](codesonar%20dashboard/CodeSonar-Analysis-Report%20(2).pdf)
+> [CodeSonar Analysis Report (PDF)](screenshots/CodeSonar-Analysis-Report.pdf)
 
 ---
 
