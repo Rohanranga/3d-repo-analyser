@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeSonar - Technical Poster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        let config = { startOnLoad: true, theme: 'dark', securityLevel: 'loose' };
+        mermaid.initialize(config);
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        body {
+            background-color: #0f172a;
+            /* Slate 900 */
+            color: #f8fafc;
+            /* Slate 50 */
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        /* 16:9 Aspect Ratio Container for Digital Poster */
+        .poster-container {
+            width: 100%;
+            max-width: 1920px;
+            aspect-ratio: 16 / 9;
+            background: linear-gradient(135deg, #020617 0%, #1e1b4b 50%, #0f172a 100%);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            padding: 3rem;
+        }
+
+        /* Decorative Grid Background */
+        .poster-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .content {
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1fr;
+            gap: 2rem;
+            height: 100%;
+        }
+
+        .header {
+            z-index: 1;
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0 0 1rem 0;
+            letter-spacing: -2px;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #94a3b8;
+            font-weight: 300;
+        }
+
+        .card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            color: #38bdf8;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            padding-bottom: 0.5rem;
+        }
+
+        .text-content p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+
+        .text-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .text-content li {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            color: #e2e8f0;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .text-content li::before {
+            content: "➔";
+            color: #818cf8;
+            margin-right: 0.75rem;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+
+        .tech-tag {
+            background: rgba(129, 140, 248, 0.1);
+            color: #818cf8;
+            border: 1px solid rgba(129, 140, 248, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .middle-column {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .diagram-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 1rem;
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Specific scaling to ensure diagram fits */
+        .mermaid {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mermaid svg {
+            max-width: 100% !important;
+            max-height: 100% !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="poster-container">
+
+        <!-- Header -->
+        <header class="header">
+            <h1>CodeSonar</h1>
+            <div class="subtitle">Next-Generation AI-Powered Repository Intelligence & Visualization</div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="content">
+
+            <!-- Left Column: Abstract & Objectives -->
+            <div class="flex flex-col gap-8">
+                <div class="card flex-grow text-content">
+                    <h2>Abstract</h2>
+                    <p>
+                        CodeSonar is an advanced, automated code analysis platform that transforms raw, unstructured
+                        GitHub repositories into deeply understandable, documented, and visualized architectures.
+                    </p>
+                    <p>
+                        By combining cutting-edge Generative AI (Google Gemini) with semantic web technologies and
+                        real-time AST parsing, CodeSonar reduces developer onboarding time from weeks to mere minutes.
+                    </p>
+                </div>
+
+                <div class="card flex-grow text-content">
+                    <h2>Core Features</h2>
+                    <ul>
+                        <li><strong>Automated Ingestion:</strong> Seamless integration with GitHub via Octokit to
+                            securely clone and traverse complex codebases.</li>
+                        <li><strong>Deep Contextual AI:</strong> Leverages Google Generative AI to understand intent,
+                            map dependencies, and uncover hidden architectural patterns.</li>
+                        <li><strong>Dynamic Rendering:</strong> Translates AI outputs into real-time interactive
+                            diagrams (Mermaid.js) and 3D Spline experiences.</li>
+                        <li><strong>Markdown Generation:</strong> Auto-generates exhaustive, developer-ready
+                            documentation dynamically based on real code.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Middle Column: Architecture Diagram -->
+            <div class="middle-column card">
+                <h2>System Architecture Data-Flow</h2>
+                <div class="diagram-container">
+                    <div class="mermaid">
+                        graph TD
+                        classDef user fill:#818cf8,stroke:#4f46e5,stroke-width:2px,color:#fff;
+                        classDef frontend fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#fff;
+                        classDef api fill:#1e1b4b,stroke:#c084fc,stroke-width:2px,color:#fff;
+                        classDef ext fill:#000,stroke:#64748b,stroke-width:2px,color:#fff;
+
+                        User((User)):::user --> |Provides Repo URL| UI[Next.js Client UI]:::frontend
+                        UI --> |Interacts with 3D/Framer| BrowserRender[Spline/Framer Render]:::frontend
+                        UI --> |Requests Analysis| API[Next.js API Routes]:::api
+
+                        API --> |Fetches Source Code| OCTO[Octokit API]:::ext
+                        OCTO <--> |Clones & Reads via REST| GITHUB[(GitHub Servers)]:::ext
+
+                            API --> |Sends Code Chunks + Context| AI[GenKit / Google AI]:::api
+                            AI <--> |LLM Inference| GEMINI[Gemini Model]:::ext
+
+                                API --> |Aggregates & Formats| PARSER[Markdown/Ast Parser]:::api
+                                PARSER --> |Returns Rich JSON| UI
+
+                                UI --> |Renders MD| MD[React Markdown]:::frontend
+                                UI --> |Renders Diagrams| MER[Mermaid.js]:::frontend
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Tech Stack & Benefits -->
+            <div class="flex flex-col gap-8">
+                <div class="card flex-grow text-content">
+                    <h2>Value Proposition</h2>
+                    <ul>
+                        <li><strong>Accelerated Onboarding:</strong> New engineers grasp repository layout and flow 10x
+                            faster using visual mappings.</li>
+                        <li><strong>Living Documentation:</strong> Never suffer from outdated READMEs. Documentation is
+                            generated directly from source on-demand.</li>
+                        <li><strong>Code Modernization:</strong> Identifies technical debt and anti-patterns immediately
+                            by exposing the system structure visually.</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h2>Technology Stack</h2>
+                    <div class="tech-tags mt-4">
+                        <span class="tech-tag">Next.js 15 (App Router)</span>
+                        <span class="tech-tag">React 19</span>
+                        <span class="tech-tag">TypeScript</span>
+                        <span class="tech-tag">Google Generative AI</span>
+                        <span class="tech-tag">GenKit Core</span>
+                        <span class="tech-tag">Octokit</span>
+                        <span class="tech-tag">Tailwind CSS v4</span>
+                        <span class="tech-tag">Framer Motion</span>
+                        <span class="tech-tag">Mermaid.js 11</span>
+                        <span class="tech-tag">React Spline</span>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+
+</html>

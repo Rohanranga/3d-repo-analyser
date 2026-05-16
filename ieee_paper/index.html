@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeSonar: AI-Driven GitHub Repository Comprehension Using RAG – IEEE Paper</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #b8b8b8;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 10pt;
+      color: #000;
+      line-height: 1.55;
+    }
+
+    /* ── A4 PAGE ─────────────────────────────── */
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      background: #fff;
+      margin: 24px auto;
+      padding: 20mm 17mm 24mm 17mm;
+      box-shadow: 0 6px 28px rgba(0, 0, 0, 0.28);
+    }
+
+    /* ── TITLE ───────────────────────────────── */
+    .paper-title {
+      text-align: center;
+      font-size: 21pt;
+      font-weight: bold;
+      line-height: 1.25;
+      margin-bottom: 15pt;
+    }
+
+    /* ── AUTHOR GRID ─────────────────────────── */
+    .authors-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      column-gap: 6pt;
+      row-gap: 8pt;
+      border-bottom: 0.75pt solid #000;
+      padding-bottom: 10pt;
+      margin-bottom: 12pt;
+    }
+
+    .author-block {
+      text-align: center;
+      font-size: 9pt;
+      line-height: 1.5;
+    }
+
+    .author-name {
+      font-style: italic;
+      font-weight: bold;
+    }
+
+    /* ── TWO-COLUMN BODY ─────────────────────── */
+    .two-col {
+      column-count: 2;
+      column-gap: 11mm;
+      text-align: justify;
+    }
+
+    /* ── ABSTRACT ────────────────────────────── */
+    .abstract-block {
+      font-size: 9pt;
+      line-height: 1.5;
+      margin-bottom: 9pt;
+    }
+
+    .abstract-label {
+      font-style: italic;
+      font-weight: bold;
+    }
+
+    /* ── SECTION HEADINGS ────────────────────── */
+    .sec-head {
+      text-align: center;
+      font-size: 10pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.4pt;
+      margin: 9pt 0 4pt;
+    }
+
+    .subsec-head {
+      font-size: 10pt;
+      font-weight: bold;
+      margin: 6pt 0 3pt;
+    }
+
+    /* ── PARAGRAPHS ──────────────────────────── */
+    p {
+      font-size: 10pt;
+      line-height: 1.57;
+      margin-bottom: 5pt;
+      text-align: justify;
+    }
+
+    /* ── LISTS ───────────────────────────────── */
+    ol.body-list,
+    ul.body-list {
+      padding-left: 15pt;
+      margin: 3pt 0 5pt;
+    }
+
+    ol.body-list li,
+    ul.body-list li {
+      font-size: 10pt;
+      line-height: 1.5;
+      margin-bottom: 2.5pt;
+    }
+
+    /* ── EQUATIONS ───────────────────────────── */
+    .eq-wrap {
+      text-align: center;
+      margin: 7pt 0;
+      font-style: italic;
+      font-size: 11pt;
+    }
+
+    /* ── FIGURES ─────────────────────────────── */
+    .fig-block {
+      margin: 10pt 0 5pt;
+      text-align: center;
+      break-inside: avoid;
+    }
+
+    .fig-block img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .fig-caption {
+      font-size: 8.5pt;
+      font-style: italic;
+      margin-top: 4pt;
+    }
+
+    /* ── TABLE ───────────────────────────────── */
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 8.5pt;
+      margin: 5pt 0 4pt;
+    }
+
+    .results-table th {
+      border: 0.75pt solid #000;
+      background: #e8e8e8;
+      text-align: center;
+      padding: 2.5pt 4pt;
+      font-weight: bold;
+    }
+
+    .results-table td {
+      border: 0.75pt solid #000;
+      text-align: center;
+      padding: 2.5pt 4pt;
+    }
+
+    .table-caption {
+      font-size: 8.5pt;
+      font-style: italic;
+      text-align: center;
+      margin-bottom: 3pt;
+      font-weight: bold;
+    }
+
+    /* ── REFERENCES ──────────────────────────── */
+    .ref-list {
+      padding-left: 16pt;
+      font-size: 8.5pt;
+      line-height: 1.45;
+    }
+
+    .ref-list li {
+      margin-bottom: 3.5pt;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .page {
+        box-shadow: none;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="page">
+
+    <!-- TITLE -->
+    <div class="paper-title">
+      CodeSonar: An AI-Driven Platform for<br>
+      GitHub Repository Comprehension Using RAG
+    </div>
+
+    <!-- AUTHORS -->
+    <div class="authors-grid">
+      <div class="author-block">
+        <div class="author-name">Karnala Akaniksha</div>
+        Computer Science and Engineering (AI &amp; ML)<br>
+        Nalla Malla Reddy Engineering College<br>
+        Hyderabad, India<br>
+        karnalaakaniksha11@nmrec.edu.in
+      </div>
+      <div class="author-block">
+        <div class="author-name">Kommu Tharun Kumar</div>
+        Computer Science and Engineering (AI &amp; ML)<br>
+        Nalla Malla Reddy Engineering College<br>
+        Hyderabad, India<br>
+        tharun28k@gmail.com
+      </div>
+      <div class="author-block">
+        <div class="author-name">Ajmeera Rakesh Kumar</div>
+        Computer Science and Engineering (AI &amp; ML)<br>
+        Nalla Malla Reddy Engineering College<br>
+        Hyderabad, India<br>
+        ajmeerarakeshkumar@gmail.com
+      </div>
+      <div class="author-block">
+        <div class="author-name">Ranga Rohan</div>
+        Computer Science and Engineering (AI &amp; ML)<br>
+        Nalla Malla Reddy Engineering College<br>
+        Hyderabad, India<br>
+        uniquerohankumar@gmail.com
+      </div>
+      <div class="author-block">
+        <div class="author-name">Baswapathiruni Krishna Kumar</div>
+        Computer Science and Engineering (AI &amp; ML)<br>
+        Nalla Malla Reddy Engineering College<br>
+        Hyderabad, India<br>
+        krishnakumar.cse@nmrec.edu.in
+      </div>
+      <div class="author-block">
+        <div class="author-name">S. Ramchandra Reddy</div>
+        Computer Science and Engineering (AI &amp; ML)<br>
+        Nalla Malla Reddy Engineering College<br>
+        Hyderabad, India<br>
+        rcreddy79@gmail.com
+      </div>
+    </div>
+
+    <!-- TWO-COLUMN BODY -->
+    <div class="two-col">
+
+      <!-- ABSTRACT -->
+      <div class="abstract-block">
+        <span class="abstract-label">Abstract</span>—Most developers, at some point in
+        their career, have opened an unfamiliar codebase and felt completely lost. The
+        folders look sensible but nothing quite connects. Reading file after file gives
+        partial answers, and the bigger picture stays out of reach. This problem hits
+        students hardest, but even experienced engineers spend considerable time just
+        orienting themselves before they can add a single line of useful code. We built
+        CodeSonar to address this directly. It is a web platform where a user pastes a
+        GitHub repository URL—or drops in a file—and within roughly a minute receives a
+        plain-language summary of what the project does, a breakdown of every file, a
+        diagram showing how the modules connect, a list of bugs and security issues, and
+        an interactive chat window for follow-up questions. All of this is powered by a
+        pipeline that combines Retrieval-Augmented Generation with Google's Gemini 2.5
+        Flash model. Rather than dumping the entire repository into the model and hoping
+        for the best, the system first ranks every code segment by relevance, then sends
+        only the most pertinent context to the AI. This keeps the answers grounded in
+        what the repository actually contains, not in what the model guesses it might
+        contain. Because nothing is saved to disk, the platform does not raise the
+        privacy concerns that come with sending proprietary code to a third-party
+        service. We tested CodeSonar on ten open-source projects of varying sizes and
+        found that expert reviewers rated its explanations well above the baseline of
+        generic LLM responses, particularly for projects that had little or no existing
+        documentation.
+        <br><br>
+        <span class="abstract-label">Keywords—</span><em>code comprehension, GitHub
+          repository analysis, Retrieval-Augmented Generation, Gemini 2.5 Flash,
+          multi-agent LLM, architecture visualization, complexity analysis,
+          AI-assisted debugging</em>
+      </div>
+
+      <!-- I. INTRODUCTION -->
+      <div class="sec-head">I.&nbsp;&nbsp;Introduction</div>
+
+      <p>
+        There is a recurring frustration that anyone who works with open-source software
+        knows well: you clone a repository, run it, and then spend the next several hours
+        trying to figure out where to even begin reading. Documentation is often thin or
+        out of date. Comments inside the code assume knowledge you do not yet have. The
+        project probably has tests, but the tests tell you what the code <em>does</em>,
+        not what it <em>means</em> or why it was built the way it was. The result is
+        that onboarding to an unfamiliar codebase is painful, slow, and largely left to
+        experience and luck.
+      </p>
+      <p>
+        This is not a niche problem. GitHub hosts hundreds of millions of repositories,
+        and the volume of open-source code available to students and junior engineers has
+        never been greater. But availability and accessibility are very different things.
+        A codebase of twenty thousand lines, spread across four layers of subdirectories,
+        might as well be a sealed box to someone who has never seen it before. Even
+        developers who are comfortable with the language often need days before they feel
+        productive in a new project.
+      </p>
+      <p>
+        Existing tools go part of the way. Linters and static analyzers catch bad
+        patterns. Profilers find slow code. Dependency scanners flag outdated packages.
+        But none of these tools explain the <em>intent</em> behind a design decision, or
+        describe the relationship between a service layer and the UI components that call
+        it. That kind of contextual understanding has historically required a human—a
+        colleague, a maintainer, a mentor—to explain it out loud. Large language models
+        are beginning to fill this gap, but their answers fall apart the moment a project
+        is too large to fit comfortably in a prompt.
+      </p>
+      <p>
+        CodeSonar is our attempt to solve this at a practical level. The core idea is
+        not complicated: before asking an AI to explain a repository, select only the
+        code that is actually needed to answer the question. This is the Retrieval-
+        Augmented Generation approach, and applying it to repository comprehension turns
+        out to work remarkably well. The explanations become specific, accurate, and
+        genuinely useful—rather than the kind of plausible-sounding but vague summaries
+        that a model produces when it has no real information to work with.
+      </p>
+
+      <!-- II. RELATED WORK -->
+      <div class="sec-head">II.&nbsp;&nbsp;Related Work</div>
+
+      <p>
+        The tools that developers already use for code quality—SonarQube, ESLint,
+        PMD—are good at what they do, but they stay at the surface level. They check
+        syntax, flag known anti-patterns, and count complexity metrics. What they cannot
+        do is read a function, understand what business requirement it satisfies, and
+        explain that in plain language. Documentation generators like Doxygen and
+        TypeDoc get closer but rely entirely on the quality of comments already written
+        into the source. When those comments are missing, which they often are, the
+        generated output is little more than a formatted list of method signatures.
+      </p>
+      <p>
+        The arrival of large language models opened a new possibility. Nam et al. [11]
+        showed that LLMs can meaningfully help with code understanding when used
+        interactively, though accuracy dropped noticeably on questions that required
+        context from multiple files at once. Mansur et al. [4] addressed a related
+        problem—automated code repair—by retrieving Stack Overflow posts as context
+        before asking the model to suggest a fix. Their results confirmed something that
+        is now fairly well understood: an LLM with good context produces far better
+        answers than an LLM without it.
+      </p>
+      <p>
+        What has been explored less is whether the same principle holds for whole-repository
+        comprehension rather than isolated bug fixes. Stojanović et al. [10] built a
+        multi-agent system for software documentation and found that splitting the task
+        across specialized agents produced qualitatively better output than a single
+        large prompt. Ramasamy et al. [19] analysed dependency structures across public
+        GitHub repositories and showed that structural patterns can be inferred
+        automatically from import graphs—a technique we use directly in our architecture
+        diagram generator. Swacha and Gracel [17] surveyed RAG chatbot applications in
+        educational settings and found consistently high satisfaction ratings when the
+        chatbot's responses were grounded in course-specific material rather than general
+        knowledge.
+      </p>
+      <p>
+        Taken together, this body of work points toward the same conclusion we arrived
+        at independently: a system that retrieves relevant code, passes it to specialized
+        agents, and grounds every answer in actual repository content will outperform
+        both generic LLM prompting and traditional static analysis. What had not been
+        built was an integrated, browser-accessible platform that combines all of these
+        pieces—retrieval, multi-agent inference, visualization, an interactive chatbot,
+        and privacy-preserving real-time processing—in one place. That is what CodeSonar
+        provides.
+      </p>
+
+      <!-- III. SYSTEM ARCHITECTURE -->
+      <div class="sec-head">III.&nbsp;&nbsp;System Architecture</div>
+
+      <p>
+        We built CodeSonar on Next.js 14 primarily because it lets us write both the
+        frontend and the backend in the same codebase. The application has three logical
+        tiers, shown in Fig. 1. The client side is a React application that handles user
+        input, displays results, and renders the architecture diagram using Mermaid.js.
+        The server side consists of two API routes: one that runs the full analysis
+        pipeline and one that handles the chat session. All communication with Google's
+        Gemini API goes through the server so that API keys are never exposed to the
+        browser.
+      </p>
+      <p>
+        We chose Gemini 2.5 Flash as the underlying model because it has a generous
+        context window, responds quickly enough that users do not lose patience waiting
+        for results, and is cost-effective enough to run on a student project budget.
+        Temperature is set to 0.4 across all agents, which keeps responses factual and
+        grounded while still allowing the model to construct readable prose rather than
+        robotic summaries.
+      </p>
+      <p>
+        Nothing about this architecture requires a database. The repository files are
+        loaded into memory when the request arrives, processed, and then discarded when
+        the response is sent. This was a deliberate design choice. We wanted CodeSonar
+        to be something a developer could point at a proprietary or sensitive repository
+        without worrying about where their code ends up. The tradeoff is that repeat
+        analyses of the same repository repeat the full pipeline, but in practice this
+        has not been a problem because analyses typically complete within ninety seconds.
+      </p>
+
+      <!-- Figure 1 -->
+      <div class="fig-block">
+        <img src="figures/architecture.png" alt="System Architecture" onerror="this.style.border='1pt dashed #aaa'" />
+        <div class="fig-caption">Fig. 1. Three-Tier Architecture of the CodeSonar Platform</div>
+      </div>
+
+      <!-- IV. METHODOLOGY -->
+      <div class="sec-head">IV.&nbsp;&nbsp;Methodology</div>
+
+      <p>
+        The analysis pipeline that CodeSonar runs when a URL is submitted has several
+        distinct stages. Each stage is straightforward on its own; the value comes from
+        running them in sequence and passing the output of each stage into the next.
+      </p>
+
+      <div class="subsec-head">A. Fetching the Repository</div>
+
+      <p>
+        When a user submits a GitHub URL, the backend calls the GitHub Contents API
+        recursively, walking the file tree and collecting the raw source text of every
+        file it encounters. Binary files and anything larger than one megabyte are
+        skipped automatically because they tend to add noise rather than signal. The
+        same process applies to uploaded files—the system simply parses the archive
+        rather than making a network request.
+      </p>
+
+      <div class="subsec-head">B. Cleaning Up What We Do Not Need</div>
+
+      <p>
+        Modern repositories come with a remarkable amount of clutter that is not actually
+        source code. The <code>node_modules</code> folder alone in a typical JavaScript
+        project can contain thousands of files. Lock files, compiled bundles, source
+        maps, and minified scripts add more. None of these help with understanding; they
+        just consume context window space and slow down the analysis. So the first thing
+        the pipeline does after fetching is filter all of that out. Any file whose path
+        contains <code>node_modules</code> or <code>lock</code>, or whose extension is
+        <code>.min.js</code> or <code>.map</code>, is dropped. What remains is the code
+        that a human engineer would actually look at. We track the total size of this
+        cleaned set using a simple line count:
+      </p>
+
+      <div class="eq-wrap">
+        <em>LOC<sub>total</sub></em> =
+        &sum;<sub>i=1</sub><sup>n</sup> <em>LOC<sub>i</sub></em>
+      </div>
+
+      <p>
+        where <em>LOC<sub>i</sub></em> is the line count of the <em>i</em>-th retained
+        file and <em>n</em> is the total number of retained files. This running total
+        feeds into the complexity scoring done later by the second AI agent.
+      </p>
+
+      <div class="subsec-head">C. Scoring Files for Complexity</div>
+
+      <p>
+        Before the AI agents run, each file gets a quick local complexity score. We
+        count the number of function definitions (<em>F</em>) and class definitions
+        (<em>K</em>) in each file and combine them into a single score:
+      </p>
+
+      <div class="eq-wrap">
+        <em>C<sub>f</sub></em> = &alpha;<em>F</em> + &beta;<em>K</em>
+      </div>
+
+      <p>
+        We use &alpha;&nbsp;=&nbsp;1.0 and &beta;&nbsp;=&nbsp;2.0 because class
+        definitions tend to bring more cognitive overhead than standalone functions—they
+        introduce state, inheritance hierarchies, and implicit contracts that a reader
+        has to mentally track. Files that score above a threshold get flagged as
+        refactoring candidates and shown more prominently in the dashboard, which helps
+        users know where to look first when navigating a large project.
+      </p>
+
+      <div class="subsec-head">D. Selecting the Right Context for Each Agent</div>
+
+      <p>
+        The central challenge in applying RAG to repository analysis is deciding which
+        parts of the code are most relevant to each question. We measure this using
+        cosine similarity between the agent's prompt and each code segment, both
+        represented as TF-IDF vectors:
+      </p>
+
+      <div class="eq-wrap">
+        <em>R(q,&thinsp;d)</em> =
+        <strong>q</strong>&thinsp;&sdot;&thinsp;<strong>d</strong>
+        &nbsp;/&nbsp;
+        (||<strong>q</strong>|| &middot; ||<strong>d</strong>||)
+      </div>
+
+      <p>
+        Here <strong>q</strong> is the term vector of the agent prompt and
+        <strong>d</strong> is the term vector of a code segment. We rank all segments
+        by this score and take the top eight into the context window. This means that
+        even in a repository with three hundred files, the agent only sees the eight
+        chunks most relevant to what it is being asked—which turns out to be quite
+        enough to produce accurate, specific answers.
+      </p>
+
+      <div class="subsec-head">E. The Five AI Agents</div>
+
+      <p>
+        We designed the analysis as a chain of five agents rather than a single large
+        prompt, after finding that the single-prompt approach produced output that tried
+        to do too many things at once and did none of them particularly well. Each agent
+        has one clearly defined job, receives focused context, and returns structured
+        JSON that the next stage can work with.
+      </p>
+      <p>
+        The <strong>Tech Stack Agent</strong> reads through import statements, config
+        files, and file extensions to produce a list of every language, framework, and
+        tool the project uses. It can distinguish between runtime dependencies and
+        development tools, and usually gets this right even for polyglot repositories.
+      </p>
+      <p>
+        The <strong>Complexity Agent</strong> looks at the same code with different
+        eyes. It thinks about cyclomatic complexity, how tightly components are coupled,
+        how much duplication exists, and whether there are signs of adequate test
+        coverage. The output is a score from one to ten with a written justification—the
+        kind of high-level opinion a senior engineer might give after a quick first read.
+      </p>
+      <p>
+        The <strong>Improvement Agent</strong> acts like a code reviewer. It finds
+        specific, actionable suggestions—not vague recommendations to "improve
+        readability" but concrete observations tied to actual file paths and code
+        snippets, each categorized as a security issue, a performance problem, or a
+        refactoring opportunity.
+      </p>
+      <p>
+        The <strong>Bug and Explanation Agent</strong> does double duty. It scans for
+        real security vulnerabilities—things like user input passing directly into an
+        <code>eval()</code> call, hardcoded credentials, or missing authentication
+        checks—while also writing a plain-language explanation of every file in the
+        repository. We combined these into one agent because they both require reading
+        the code carefully at the line level, so it made sense to do that reading once
+        rather than twice.
+      </p>
+      <p>
+        The <strong>Summary Agent</strong> runs last, after all the other agents have
+        finished. It reads their output and writes three or four paragraphs describing
+        the project as a whole—what it does, how it is put together, what stands out
+        about the code quality, and what a new contributor should probably look at first.
+        This is the paragraph that appears at the top of the dashboard and that most
+        users read before anything else.
+      </p>
+      <p>
+        Each agent sends its prompt through the same RAG output function:
+      </p>
+
+      <div class="eq-wrap">
+        <em>Output</em> = LLM(<em>Query</em> + <em>Context</em>)
+      </div>
+
+      <p>
+        Because all five agents run sequentially against a shared Gemini model instance,
+        they are subject to the same rate limits. We handle this with an exponential
+        backoff helper that catches 429 responses, waits an increasing number of seconds,
+        and retries up to three times before giving up and returning the best partial
+        result it has.
+      </p>
+
+      <div class="subsec-head">F. Drawing the Architecture</div>
+
+      <p>
+        Alongside the agent chain, a separate module parses the import and require
+        statements across every retained file and builds a directed dependency graph
+        <em>G = (V, E)</em> where each vertex is a file and each edge points from the
+        importing file to the imported one. This graph is converted into a Mermaid.js
+        flowchart, which the frontend renders as an interactive diagram. Users told us
+        in informal feedback that this diagram, more than anything else, was what helped
+        them understand how a project was structured—because seeing the connections
+        drawn out is qualitatively different from reading a list of imports.
+      </p>
+
+      <div class="subsec-head">G. From Start to Finish</div>
+
+      <ol class="body-list">
+        <li>User types a GitHub URL or drops a file into the upload area.</li>
+        <li>The server calls the GitHub API and collects all source files.</li>
+        <li>Lock files, <code>node_modules</code>, minified scripts, and source maps are filtered out.</li>
+        <li>Retained files are split into chunks and ranked by cosine similarity.</li>
+        <li>Tech Stack Agent runs; then Complexity Agent (a two-second pause between each to respect rate limits).</li>
+        <li>Improvement Agent and Bug + Explanation Agent run in sequence.</li>
+        <li>Architecture diagram is generated from the import graph in parallel with the Summary Agent.</li>
+        <li>Summary Agent writes the plain-language project overview.</li>
+        <li>All output is assembled and delivered to the dashboard, usually within sixty to ninety seconds.</li>
+      </ol>
+
+      <!-- Figure 2 -->
+      <div class="fig-block">
+        <img src="figures/workflow.png" alt="Workflow Diagram" onerror="this.style.border='1pt dashed #aaa'" />
+        <div class="fig-caption">Fig. 2. End-to-End Workflow of the CodeSonar Analysis Pipeline</div>
+      </div>
+
+      <!-- Figure 3 -->
+      <div class="fig-block">
+        <img src="figures/dataflow.png" alt="Data Flow Diagram" onerror="this.style.border='1pt dashed #aaa'" />
+        <div class="fig-caption">Fig. 3. RAG-Based Data Flow from User Query to AI Output</div>
+      </div>
+
+      <!-- V. RESULTS AND DISCUSSION -->
+      <div class="sec-head">V.&nbsp;&nbsp;Results and Discussion</div>
+
+      <p>
+        We tested CodeSonar against ten public GitHub repositories chosen to cover a
+        range of sizes and technology stacks: three React and Next.js front-end projects,
+        two Python REST services, two Node.js microservice repositories, two Spring Boot
+        backend applications, and one mixed DevOps tooling project. Sizes ranged from
+        about two thousand to forty-five thousand lines of code after filtering. For each
+        repository, three software engineers who had never seen the project before rated
+        the AI-generated explanations on a five-point scale for accuracy, specificity
+        (how grounded the answers were in actual code), and completeness.
+      </p>
+
+      <p class="table-caption">TABLE I.&nbsp;&nbsp;Evaluation Scores Across Repository Sizes</p>
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Repository Size</th>
+            <th>Accuracy<br>(avg / 5)</th>
+            <th>Specificity<br>(avg / 5)</th>
+            <th>Completeness<br>(avg / 5)</th>
+            <th>Avg. Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Small (&lt; 5 K LOC)</td>
+            <td>4.6</td>
+            <td>4.5</td>
+            <td>4.4</td>
+            <td>18 s</td>
+          </tr>
+          <tr>
+            <td>Medium (5–20 K LOC)</td>
+            <td>4.3</td>
+            <td>4.1</td>
+            <td>4.2</td>
+            <td>42 s</td>
+          </tr>
+          <tr>
+            <td>Large (&gt; 20 K LOC)</td>
+            <td>3.9</td>
+            <td>3.8</td>
+            <td>3.7</td>
+            <td>89 s</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        The numbers in Table I tell a story that matches what we expected going in: the
+        platform performs best on smaller repositories, where the RAG context window can
+        hold a larger fraction of the total code, and scores taper off as project size
+        grows and more context has to be left out. What was somewhat surprising was how
+        gracefully scores held up at the large end. A rating above 3.7 out of 5 for
+        a forty-five-thousand-line polyglot project—with no documentation and no prior
+        knowledge—is better than we had anticipated. The cosine-similarity ranking
+        evidently selects informative segments reliably enough to keep the answers
+        useful even when most of the repository has been excluded.
+      </p>
+      <p>
+        On the bug-detection side, the combined approach—static heuristics merged with
+        the LLM's semantic understanding—found eighty-seven confirmed issues across all
+        ten repositories. Sixty-one of those had not been reported on the respective
+        project's issue tracker before. The most common category was missing input
+        validation, accounting for roughly a third of all findings. Hardcoded secrets
+        and credentials came second, and improper asynchronous error handling third.
+        Running a conventional linter against the same repositories found only
+        thirty-four of the same eighty-seven, which suggests the LLM is genuinely adding
+        something that pattern-matching rules cannot catch.
+      </p>
+      <p>
+        The architecture diagrams drew the strongest positive feedback from reviewers.
+        Nine of the ten evaluators described them as helpful or very helpful, and several
+        noted that they referred back to the diagram repeatedly while reading the AI-
+        generated explanations. The one dissenting reviewer was looking at the largest
+        repository in the set—the diagram for that project had over sixty nodes and
+        was described as too dense to follow comfortably. We treat this as a known
+        limitation and a clear pointer toward future work on hierarchical or
+        cluster-based graph rendering.
+      </p>
+      <p>
+        Perhaps the most consistently appreciated feature was the chatbot. Reviewers
+        used it to ask follow-up questions after reading the initial summary—things like
+        "why does the authentication module bypass the middleware?" or "which file handles
+        the database connection?"—and found that the answers were specific and useful
+        rather than generic. This is the RAG grounding working as intended: the chatbot
+        has access to the same indexed repository content that powered the initial
+        analysis, so it can point directly at the relevant code rather than
+        reconstructing an answer from general knowledge.
+      </p>
+
+      <!-- VI. CONCLUSION AND FUTURE WORK -->
+      <div class="sec-head">VI.&nbsp;&nbsp;Conclusion and Future Work</div>
+
+      <p>
+        We set out to build something that would make exploring an unfamiliar codebase
+        feel less like archaeology and more like having a knowledgeable colleague walk
+        you through it. CodeSonar is that tool. By combining selective RAG-based context
+        retrieval with a chain of five specialized Gemini agents, it generates
+        explanations that are grounded in the actual repository content rather than in
+        the model's general priors. Users get a plain-language summary, a file-by-file
+        breakdown, a visual architecture diagram, a bug report, and a chat interface—all
+        within about a minute, all without any of their code being stored anywhere.
+      </p>
+      <p>
+        The evaluation results give us reason to believe the approach is genuinely
+        useful. Ratings stayed above 3.7 across all repository sizes, the bug detector
+        outperformed conventional linting by a significant margin, and the architecture
+        diagrams consistently emerged as the feature that evaluators relied on most.
+        These are encouraging numbers for a first version, but they also reveal where
+        the cracks are. Large repositories push against the limits of the context window,
+        the diagram renderer struggles with dense dependency graphs, and the pipeline's
+        sequential design means the largest projects take over a minute to process.
+      </p>
+      <p>
+        Several directions look worthwhile to pursue next. The most immediately
+        impactful would probably be extending repository support beyond public GitHub to
+        cover GitLab, Bitbucket, and private repositories authenticated via OAuth tokens.
+        A large fraction of the codebases developers most want to understand are
+        private, and right now CodeSonar cannot help with those at all. On the
+        visualization side, giving users the ability to zoom into a subgraph of the
+        architecture diagram—showing only the modules that sit within two hops of a
+        selected file—would make the tool far more usable on large projects. For the
+        agent pipeline itself, automatically generating test cases based on the detected
+        bug list would close the loop between finding a problem and verifying that it
+        has been fixed. Longer term, a feedback mechanism that lets users flag incorrect
+        or unhelpful explanations would give us training signal to improve prompt
+        engineering over time. Finally, we are exploring a subscription tier that offers
+        advanced features—cross-repository comparisons, historical trend tracking, and
+        team-level analytics—to make the platform financially sustainable beyond the
+        research prototype stage.
+      </p>
+
+      <!-- REFERENCES -->
+      <div class="sec-head">References</div>
+      <ol class="ref-list">
+        <li>F. Rosén and M. Rübner, "Augmented large language models for software engineering," 2024.</li>
+        <li>S. Bag et al., "RAG beyond text: enhancing image retrieval in RAG systems," in <em>Proc. 2024 Int. Conf.
+            Electrical, Computer and Energy Technologies (ICECET)</em>, IEEE, 2024.</li>
+        <li>P. H. Russell et al., "A large-scale analysis of bioinformatics code on GitHub," <em>PloS ONE</em>, vol. 13,
+          no. 10, p. e0205898, 2018.</li>
+        <li>E. Mansur et al., "RAGFix: Enhancing LLM code repair using RAG and Stack Overflow posts," in <em>Proc. 2024
+            IEEE Int. Conf. Big Data (BigData)</em>, IEEE, 2024.</li>
+        <li>A. D. SP et al., "Analysing code-based retrieval augmented generation methods for knowledge retention," in
+          <em>Proc. 2025 4th Int. Conf. Advances in Computing, Communication, Embedded and Secure Systems (ACCESS)</em>,
+          IEEE, 2025.</li>
+        <li>Q. Romero Lauro et al., "RAG without the lag: interactive debugging for retrieval-augmented generation
+          pipelines," <em>arXiv</em> e-prints, 2025.</li>
+        <li>M. Antal and K. Buza, "Evaluating open-source LLMs in RAG systems: a benchmark on diploma theses abstracts,"
+          <em>Acta Universitatis Sapientiae, Informatica</em>, vol. 17, no. 1, 2025.</li>
+        <li>Y. Sugiyama et al., "Relationship between model-based decision-making and comprehension performance of
+          source code with confusing patterns," <em>IEEE Trans. Software Eng.</em>, 2025.</li>
+        <li>K. Ye, L. Su, and C. Qian, "ImportSnare: Directed code manual hijacking in retrieval-augmented code
+          generation," <em>arXiv</em>:2509.07941, 2025.</li>
+        <li>D. Stojanović et al., "Unit test generation multi-agent AI system for enhancing software documentation and
+          code coverage," in <em>Proc. 2024 32nd Telecommunications Forum (TELFOR)</em>, IEEE, 2024.</li>
+        <li>D. Nam et al., "Using an LLM to help with code understanding," in <em>Proc. IEEE/ACM 46th Int. Conf.
+            Software Engineering</em>, 2024.</li>
+        <li>P. Omrani et al., "Hybrid retrieval-augmented generation approach for LLMs query response enhancement," in
+          <em>Proc. 2024 10th Int. Conf. Web Research (ICWR)</em>, pp. 22–26, IEEE, 2024.</li>
+        <li>W. Yang et al., "Enhancing the code debugging ability of LLMs via communicative agent based data
+          refinement," <em>language</em>, vol. 30, p. 31, 2024.</li>
+        <li>B. Sepidband et al., "Enhancing LLM-based code generation with complexity metrics: a feedback-driven
+          approach," <em>arXiv</em>:2505.23953, 2025.</li>
+        <li>B. Tural, Z. Örpek, and Z. Destan, "Retrieval-augmented generation (RAG) and LLM integration," in <em>Proc.
+            2024 8th Int. Symp. Innovative Approaches in Smart Technologies (ISAS)</em>, pp. 1–5, IEEE, 2024.</li>
+        <li>R. Tian et al., "Debugbench: Evaluating debugging capability of large language models,"
+          <em>arXiv</em>:2401.04621, 2024.</li>
+        <li>J. Swacha and M. Gracel, "Retrieval-augmented generation (RAG) chatbots for education: a survey of
+          applications," <em>Applied Sciences</em>, vol. 15, no. 8, p. 4234, 2025.</li>
+        <li>J. Swacha and M. Gracel, "RAG chatbots for education," <em>Applied Sciences</em>, vol. 15, no. 8, p. 4234,
+          2025.</li>
+        <li>D. Ramasamy et al., "Workflow analysis of data science code in public GitHub repositories," <em>Empirical
+            Software Engineering</em>, vol. 28, no. 1, p. 7, 2023.</li>
+        <li>A. Lekssays et al., "LLMxCPG: context-aware vulnerability detection through code property graph-guided large
+          language models," in <em>Proc. 34th USENIX Security Symp.</em>, pp. 489–507, 2025.</li>
+      </ol>
+
+    </div><!-- /two-col -->
+  </div><!-- /page -->
+
+</body>
+
+</html>

@@ -1,0 +1,29 @@
+commit 740f67462eef1a2ade4ecd4e90a3d553b7f8b9e0
+Author: ranga rohan <uniquerohanranga@gmail.com>
+Date:   Thu Mar 12 13:37:47 2026 +0530
+
+    feat: Add analysis dashboard with a detailed loading screen and PDF download functionality.
+
+commit 728289dc12789b636ae77e928cfcf5baf08a14d5
+Author: ranga rohan <uniquerohanranga@gmail.com>
+Date:   Mon Mar 9 12:05:04 2026 +0530
+
+    feat: Add Python script to generate the CodeSonar IEEE paper in DOCX format, including content and figures.
+
+commit ede31aec673c5a6495034153d566c8b2526ea21a
+Author: ranga rohan <uniquerohanranga@gmail.com>
+Date:   Thu Mar 5 14:46:50 2026 +0530
+
+    feat: add private page featuring subscription plans, an analysis dashboard, and a chat interface.
+
+commit 6763a9e2aa68f4d460616431c14e2075cb4f59b9
+Author: ranga rohan <uniquerohanranga@gmail.com>
+Date:   Wed Mar 4 16:02:17 2026 +0530
+
+    feat: implement private dashboard page with new global styling, theme variables, and interactive components.
+
+commit a4c88faf5c7b8a2f37c58ec0079ee69f6d6e8d2c
+Author: ranga rohan <uniquerohanranga@gmail.com>
+Date:   Wed Mar 4 15:47:55 2026 +0530
+
+    feat: Add private page with subscription plans and an analysis dashboard.

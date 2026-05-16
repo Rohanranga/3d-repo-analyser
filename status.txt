@@ -1,0 +1,30 @@
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	new file:   CodeSonar_Codebase_Dump.txt
+	new file:   CodeSonar_IEEE_Paper.txt
+	new file:   CodeSonar_Presentation.pptx
+	new file:   create_ppt.py
+	new file:   dump.py
+	new file:   ieee_paper/CodeSonar_IEEE_Paper.docx
+	new file:   ieee_paper/figures/architecture.png
+	new file:   ieee_paper/figures/dataflow.png
+	new file:   ieee_paper/figures/workflow.png
+	new file:   ieee_paper/generate_docx.py
+	new file:   ieee_paper/index.html
+	new file:   ieee_paper/~$deSonar_IEEE_Paper.docx
+	modified:   package-lock.json
+	modified:   package.json
+	new file:   poster.html
+	new file:   push.log
+	new file:   src/components/analysis/DownloadPDF.tsx
+	modified:   src/components/dashboard/AnalysisDashboard.tsx
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	log.txt
+	log_file.txt
+	status.txt
+

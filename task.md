@@ -1,0 +1,30 @@
+# CodeSonar Development Tasks
+
+- [x] Project Initialization
+    - [x] Initialize Next.js project with Tailwind CSS <!-- id: 0 -->
+    - [x] Install dependencies (Genkit, etc.) <!-- id: 1 -->
+    - [x] Configure project structure <!-- id: 2 -->
+- [/] Core UI Implementation
+    - [x] Design Landing Page (Hero, Input Section) <!-- id: 3 -->
+    - [x] Create Dashboard Layout <!-- id: 4 -->
+    - [x] Implement Repository Input / File Upload Component <!-- id: 5 -->
+- [x] Analysis Engine Setup (Mock/Real)
+    - [x] Setup API routes for analysis <!-- id: 6 -->
+    - [x] Implement Gemini integration (via Genkit) <!-- id: 7 -->
+- [x] Backend / API Implementation
+    - [x] Genkit Setup
+    - [x] GitHub Repo Fetching Logic
+    - [x] File Upload Logic
+- [x] Feature Implementation
+    - [x] High-Level Summary & Tech Stack Display <!-- id: 8 -->
+    - [x] Complexity & Quality Analysis View <!-- id: 9 -->
+    - [x] Visual Architecture Diagrams (Mermaid.js integration) <!-- id: 10 -->
+    - [x] File-by-file Code Breakdown <!-- id: 11 -->
+    - [x] Actionable Recommendations View <!-- id: 12 -->
+- [x] Interactive Q&A
+    - [x] Build Chat Interface <!-- id: 13 -->
+    - [x] Integrate Chat with Analysis Context <!-- id: 14 -->
+- [x] Polish & Refinement
+    - [x] Apply Premium Styling & Animations <!-- id: 15 -->
+    - [x] Responsive Design Adjustments <!-- id: 16 -->
+    - [x] SEO Optimization <!-- id: 17 -->
