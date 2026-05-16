@@ -132,27 +132,34 @@ function cleanVersion(version: string): string {
  * Note: In a real application, you'd fetch this from npm registry API
  */
 function getLatestVersionHint(packageName: string): string {
-    // Common package latest versions (as of 2024)
     const knownVersions: Record<string, string> = {
-        'react': '18.3.1',
-        'react-dom': '18.3.1',
-        'next': '15.1.0',
-        'typescript': '5.7.2',
-        'tailwindcss': '3.4.1',
-        '@types/react': '18.3.12',
-        '@types/node': '22.10.2',
-        'eslint': '9.17.0',
-        'framer-motion': '11.15.0',
-        'lucide-react': '0.468.0',
-        'axios': '1.7.9',
-        'express': '4.21.2',
-        'vue': '3.5.13',
-        'svelte': '5.15.1',
-        'angular': '19.1.3',
-        'prisma': '6.2.1',
-        'zod': '3.24.1',
-        'vite': '6.0.7',
-        'webpack': '5.97.1'
+        'react': '19.2.0',
+        'react-dom': '19.2.0',
+        'next': '16.1.6',
+        'typescript': '5.8.3',
+        'tailwindcss': '4.1.7',
+        '@types/react': '19.1.4',
+        '@types/node': '22.15.17',
+        'eslint': '9.27.0',
+        'framer-motion': '12.23.24',
+        'lucide-react': '0.554.0',
+        'axios': '1.9.0',
+        'express': '5.1.0',
+        'vue': '3.5.16',
+        'svelte': '5.34.6',
+        '@angular/core': '20.0.0',
+        'prisma': '6.9.0',
+        'zod': '3.25.20',
+        'vite': '6.3.5',
+        'webpack': '5.99.9',
+        'three': '0.175.0',
+        '@react-three/fiber': '9.1.2',
+        '@react-three/drei': '10.0.4',
+        'mermaid': '11.6.0',
+        'qrcode': '1.5.4',
+        'octokit': '5.0.5',
+        'jspdf': '3.0.1',
+        'electron': '36.4.0',
     };
 
     return knownVersions[packageName] || '-';
@@ -234,7 +241,8 @@ function detectTechnologies(files: Array<{ path: string; content: string }>): Pa
 }
 
 /**
- * Compares version strings to determine if a package is outdated
+ * Compares version strings to determine if a package is outdated.
+ * If current >= latest, the package is considered up-to-date.
  */
 export function compareVersions(current: string, latest: string): 'latest' | 'outdated' | 'unknown' {
     if (latest === '-' || current === 'Detected' || current === 'Active') {
@@ -245,16 +253,12 @@ export function compareVersions(current: string, latest: string): 'latest' | 'ou
         const currentParts = current.split('.').map(Number);
         const latestParts = latest.split('.').map(Number);
 
-        // Compare major version
-        if (currentParts[0] < latestParts[0]) return 'outdated';
-        if (currentParts[0] > latestParts[0]) return 'latest';
-
-        // Compare minor version
-        if (currentParts[1] < latestParts[1]) return 'outdated';
-        if (currentParts[1] > latestParts[1]) return 'latest';
-
-        // Compare patch version
-        if (currentParts[2] < latestParts[2]) return 'outdated';
+        for (let i = 0; i < Math.max(currentParts.length, latestParts.length); i++) {
+            const c = currentParts[i] || 0;
+            const l = latestParts[i] || 0;
+            if (c < l) return 'outdated';
+            if (c > l) return 'latest';
+        }
 
         return 'latest';
     } catch (error) {

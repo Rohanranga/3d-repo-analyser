@@ -54,3 +54,5 @@ CodeSonar_Dump.exe
 dist-electron/
 test-*.mjs
 CodeSonar_*.txt
+*.mp4
+codesonar dashboard/

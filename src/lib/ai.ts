@@ -42,6 +42,309 @@ async function withRetry<T>(fn: () => Promise<T>, retries = 3, baseMs = 8000): P
     throw new Error('Max retries exceeded');
 }
 
+function buildFallbackSummary(
+    files: { path: string; content: string }[],
+    techStack: { languages: string[]; frameworks: string[]; tools: string[] },
+    complexity: { score?: number; justification?: string; metrics?: { totalFiles?: number; totalLines?: number } },
+    errorCount: number,
+    warningCount: number
+): string {
+    const langs = techStack.languages.filter(Boolean);
+    const fws = techStack.frameworks.filter(Boolean);
+    const tools = techStack.tools.filter(Boolean);
+    const totalLines = complexity.metrics?.totalLines || files.reduce((a, f) => a + f.content.split('\n').length, 0);
+    const totalFiles = complexity.metrics?.totalFiles || files.length;
+
+    // --- Extract project identity from package.json ---
+    let projectName = '';
+    let projectDescription = '';
+    const pkgFile = files.find(f => f.path.endsWith('package.json') && !f.path.includes('node_modules'));
+    if (pkgFile) {
+        try {
+            const pkg = JSON.parse(pkgFile.content);
+            projectName = pkg.name || '';
+            projectDescription = pkg.description || '';
+        } catch {}
+    }
+
+    // --- Detect project type ---
+    let projectType = 'software project';
+    if (fws.some(f => /next/i.test(f))) projectType = 'Next.js full-stack web application';
+    else if (fws.some(f => /react/i.test(f))) projectType = 'React web application';
+    else if (fws.some(f => /vue/i.test(f))) projectType = 'Vue.js web application';
+    else if (fws.some(f => /svelte/i.test(f))) projectType = 'Svelte web application';
+    else if (fws.some(f => /angular/i.test(f))) projectType = 'Angular web application';
+    else if (fws.some(f => /express/i.test(f))) projectType = 'Express.js backend service';
+    else if (fws.some(f => /flask|django|fastapi/i.test(f))) projectType = 'Python web application';
+    else if (fws.some(f => /spring/i.test(f))) projectType = 'Spring Boot backend application';
+
+    // --- Collect notable library imports across all source files ---
+    const keyImports = new Set<string>();
+    const sourceFiles = files.filter(f => /\.(ts|tsx|js|jsx)$/.test(f.path) && !f.path.includes('node_modules'));
+
+    for (const file of sourceFiles) {
+        const importMatches = file.content.matchAll(/(?:from\s+['"]|require\s*\(\s*['"])([^./][^'"]*)['"]/g);
+        for (const m of importMatches) {
+            const lib = m[1].startsWith('@') ? m[1].split('/').slice(0, 2).join('/') : m[1].split('/')[0];
+            keyImports.add(lib);
+        }
+    }
+
+    // --- Detect structural patterns for engineering practices ---
+    const hasLib = files.some(f => f.path.includes('/lib/') || f.path.includes('/utils/') || f.path.includes('/helpers/'));
+    const hasTypes = files.some(f => f.path.includes('/types/') || f.path.endsWith('.d.ts'));
+    const hasHooks = files.some(f => f.path.includes('/hooks/') || f.path.match(/use[A-Z]\w+\.(ts|js)$/));
+    const hasTests = files.some(f => /\.test\.|\.spec\.|__tests__/.test(f.path));
+
+    // --- Describe what each API route actually does (by reading its code) ---
+    const routeDescriptions: string[] = [];
+    const apiRouteFiles = sourceFiles.filter(f =>
+        f.path.includes('/api/') || f.path.match(/route\.(ts|js)$/)
+    );
+    const serviceMap: Record<string, string> = {
+        'cloudinary': 'cloud-based image and media management through Cloudinary',
+        'stripe': 'payment processing via Stripe', '@stripe': 'payment processing via Stripe',
+        'nodemailer': 'email delivery', '@sendgrid': 'transactional emails via SendGrid',
+        'mongoose': 'MongoDB', '@prisma/client': 'Prisma ORM with a relational database',
+        'prisma': 'Prisma ORM', 'drizzle-orm': 'Drizzle ORM',
+        'redis': 'Redis caching', 'ioredis': 'Redis caching',
+        'openai': 'OpenAI API for AI capabilities', '@google/generative-ai': 'Google Gemini AI',
+        'jsonwebtoken': 'JWT-based token authentication', 'bcrypt': 'secure password hashing',
+        'bcryptjs': 'secure password hashing', 'next-auth': 'NextAuth.js session management',
+        'passport': 'Passport.js authentication strategies',
+        'multer': 'multipart file upload handling', 'sharp': 'server-side image processing',
+        'socket.io': 'real-time WebSocket communication',
+    };
+
+    for (const file of apiRouteFiles) {
+        const routeName = file.path
+            .replace(/.*\/api\//, '')
+            .replace(/\/route\.(ts|js)$/, '')
+            .replace(/\.(ts|js)$/, '')
+            .replace(/\[([^\]]+)\]/g, ':$1');
+        const content = file.content.slice(0, 3000);
+
+        const fileImports = new Set<string>();
+        const importMatches = content.matchAll(/(?:from\s+['"]|require\s*\(\s*['"])([^./][^'"]*)['"]/g);
+        for (const m of importMatches) {
+            const lib = m[1].startsWith('@') ? m[1].split('/').slice(0, 2).join('/') : m[1].split('/')[0];
+            fileImports.add(lib);
+        }
+        const services: string[] = [];
+        for (const [lib, desc] of Object.entries(serviceMap)) {
+            if (fileImports.has(lib) || content.toLowerCase().includes(lib.toLowerCase())) services.push(desc);
+        }
+
+        const hasAuth = /auth|token|session|login|signup|register|password|credential/i.test(content);
+        const hasChat = /chat|message|conversation|prompt|completion/i.test(content);
+        const hasUpload = /upload|file|multipart|formdata|blob/i.test(content);
+        const hasCrud = /\.(find|create|update|delete|save|remove|insert)\s*\(/i.test(content);
+        const hasPayment = /payment|charge|subscription|checkout/i.test(content);
+        const hasEmail = /email|mail|send.*notification/i.test(content);
+
+        let desc = '';
+        if (hasAuth && !hasChat) desc = `manages user authentication and session handling`;
+        else if (hasChat) desc = `processes chat messages and AI conversations`;
+        else if (hasPayment) desc = `handles payment transactions`;
+        else if (hasUpload) desc = `handles file uploads and media storage`;
+        else if (hasEmail) desc = `manages email notifications`;
+        else if (hasCrud) desc = `manages data operations for ${routeName}`;
+        else desc = `handles ${routeName.replace(/[/-]/g, ' ').trim()} operations`;
+        if (services.length > 0) desc += ` using ${services.slice(0, 2).join(' and ')}`;
+        routeDescriptions.push(desc);
+    }
+
+    // --- Describe what UI components actually do (by reading their code) ---
+    const componentDescriptions: string[] = [];
+    const componentFiles = sourceFiles.filter(f => f.path.includes('/components/'));
+    const componentGroups = new Map<string, string[]>();
+    for (const f of componentFiles) {
+        const dirMatch = f.path.match(/\/components\/([^/]+)\//);
+        const group = dirMatch ? dirMatch[1] : '_root';
+        if (!componentGroups.has(group)) componentGroups.set(group, []);
+        componentGroups.get(group)!.push(f.content.slice(0, 2000));
+    }
+
+    const uiPatternMap: Array<{ test: RegExp; desc: string }> = [
+        { test: /form|<input|<textarea|onSubmit|handleSubmit/i, desc: 'interactive forms' },
+        { test: /table|<th|<td|<thead|DataTable/i, desc: 'data tables' },
+        { test: /chart|graph|<canvas|recharts|d3\./i, desc: 'data visualization' },
+        { test: /modal|dialog|<Dialog|<Modal/i, desc: 'modal dialogs' },
+        { test: /nav|menu|sidebar|<Nav|<Menu/i, desc: 'navigation' },
+        { test: /editor|monaco|codemirror|<Editor/i, desc: 'code/text editing' },
+        { test: /comment|reply|thread/i, desc: 'comment threads' },
+        { test: /search|<Search|autocomplete/i, desc: 'search interface' },
+        { test: /upload|dropzone|file.*input/i, desc: 'file uploads' },
+        { test: /markdown|<ReactMarkdown/i, desc: 'markdown rendering' },
+        { test: /three|canvas|3d|@react-three/i, desc: '3D visualization' },
+        { test: /mermaid|diagram/i, desc: 'architecture diagrams' },
+        { test: /qr|QRCode/i, desc: 'QR codes' },
+        { test: /avatar|profile|user.*card/i, desc: 'user profiles' },
+        { test: /carousel|slider|swiper/i, desc: 'image carousels' },
+        { test: /notification|toast|alert/i, desc: 'notifications' },
+        { test: /drag|drop|sortable|dnd/i, desc: 'drag-and-drop' },
+        { test: /calendar|date.*picker/i, desc: 'date selection' },
+        { test: /skeleton|shimmer|loading.*spinner/i, desc: 'loading states' },
+    ];
+
+    for (const [group, contents] of componentGroups) {
+        const combined = contents.join('\n');
+        const matched: string[] = [];
+        for (const { test, desc } of uiPatternMap) {
+            if (test.test(combined)) matched.push(desc);
+        }
+        if (matched.length > 0) {
+            componentDescriptions.push(`${group} (${matched.slice(0, 3).join(', ')})`);
+        } else {
+            componentDescriptions.push(group);
+        }
+    }
+
+    // --- Detect external service integrations with context ---
+    const integrations: string[] = [];
+    for (const [lib, desc] of Object.entries(serviceMap)) {
+        if (keyImports.has(lib)) integrations.push(desc);
+    }
+
+    // --- Read README for extra project context ---
+    const readmeFile = files.find(f => /readme\.md$/i.test(f.path));
+    let readmeIntro = '';
+    if (readmeFile) {
+        for (const line of readmeFile.content.split('\n')) {
+            const t = line.trim();
+            if (t && !t.startsWith('#') && !t.startsWith('!') && !t.startsWith('[') && t.length > 30) {
+                readmeIntro = t;
+                break;
+            }
+        }
+    }
+
+    // --- Detect page-level features ---
+    const pageDescriptions: string[] = [];
+    const pageFiles = sourceFiles.filter(f =>
+        (f.path.includes('/app/') && f.path.endsWith('page.tsx')) ||
+        (f.path.includes('/pages/') && /\.(tsx|jsx|js|ts)$/.test(f.path) && !f.path.includes('_app') && !f.path.includes('_document'))
+    );
+    for (const page of pageFiles) {
+        const pageName = page.path
+            .replace(/.*\/(app|pages)\//, '')
+            .replace(/\/page\.(tsx|ts|jsx|js)$/, '')
+            .replace(/\.(tsx|ts|jsx|js)$/, '')
+            .replace(/\//g, ' > ')
+            || 'home';
+        const matched: string[] = [];
+        for (const { test, desc } of uiPatternMap) {
+            if (test.test(page.content.slice(0, 2000))) matched.push(desc);
+        }
+        if (matched.length > 0) pageDescriptions.push(`${pageName} page with ${matched.slice(0, 2).join(' and ')}`);
+    }
+
+    // ============================================
+    // BUILD THE NARRATIVE
+    // ============================================
+    const paragraphs: string[] = [];
+
+    // --- Paragraph 1: What this project IS and what it DOES ---
+    const displayName = projectName || 'This project';
+    const purpose = projectDescription || readmeIntro || '';
+    let p1 = '';
+    if (purpose) {
+        p1 = `${displayName} is a ${projectType} that ${purpose.charAt(0).toLowerCase()}${purpose.slice(1)}${purpose.endsWith('.') ? '' : '.'}`;
+    } else {
+        // Infer purpose from code content
+        const allCode = sourceFiles.map(f => f.content.slice(0, 500)).join(' ').toLowerCase();
+        const purposeSignals: string[] = [];
+        if (/chat|conversation|message.*ai|llm|prompt.*completion/i.test(allCode)) purposeSignals.push('AI-powered conversations');
+        if (/analyz|analysis|scan|lint|audit/i.test(allCode)) purposeSignals.push('code analysis and auditing');
+        if (/dashboard|analytics|metrics|chart/i.test(allCode)) purposeSignals.push('data visualization and analytics');
+        if (/ecommerce|cart|checkout|product|shop/i.test(allCode)) purposeSignals.push('e-commerce functionality');
+        if (/blog|post|article|content.*manage/i.test(allCode)) purposeSignals.push('content management');
+        if (/social|feed|follow|like|share/i.test(allCode)) purposeSignals.push('social interactions');
+        if (/task|todo|project.*manage|kanban/i.test(allCode)) purposeSignals.push('project and task management');
+        if (/booking|reservation|schedule|appointment/i.test(allCode)) purposeSignals.push('booking and scheduling');
+        if (/portfolio|resume|showcase/i.test(allCode)) purposeSignals.push('portfolio showcasing');
+        if (/survey|poll|feedback/i.test(allCode)) purposeSignals.push('survey and feedback collection');
+        if (/file.*manag|document|storage/i.test(allCode)) purposeSignals.push('file and document management');
+        if (/game|player|score|level/i.test(allCode)) purposeSignals.push('gaming mechanics');
+        if (/learn|course|lesson|quiz/i.test(allCode)) purposeSignals.push('educational content');
+        if (/health|patient|medical/i.test(allCode)) purposeSignals.push('healthcare data management');
+        if (/weather|forecast/i.test(allCode)) purposeSignals.push('weather information');
+        if (/map|location|geo/i.test(allCode)) purposeSignals.push('location-based services');
+        if (/music|playlist|audio/i.test(allCode)) purposeSignals.push('music/audio streaming');
+        if (/video|stream|watch/i.test(allCode)) purposeSignals.push('video content delivery');
+        if (/inventory|warehouse|stock/i.test(allCode)) purposeSignals.push('inventory management');
+        if (/crm|customer|lead/i.test(allCode)) purposeSignals.push('customer relationship management');
+
+        if (purposeSignals.length > 0) {
+            p1 = `${displayName} is a ${projectType} built for ${purposeSignals.slice(0, 3).join(', ')}.`;
+        } else {
+            p1 = `${displayName} is a ${projectType}.`;
+        }
+    }
+    p1 += ` It comprises ${totalFiles} files and roughly ${totalLines.toLocaleString()} lines of code, written primarily in ${langs.join(', ') || 'modern web technologies'}.`;
+    paragraphs.push(p1);
+
+    // --- Paragraph 2: How it works (API routes + what they do) ---
+    if (routeDescriptions.length > 0) {
+        const uniqueDescs = [...new Set(routeDescriptions)];
+        let p2 = `Its backend exposes ${apiRouteFiles.length} API endpoint${apiRouteFiles.length > 1 ? 's' : ''} that`;
+        if (uniqueDescs.length <= 3) {
+            p2 += ` ${uniqueDescs.join(', ')}`;
+        } else {
+            p2 += ` ${uniqueDescs.slice(0, 3).join(', ')}, among other operations`;
+        }
+        p2 += '.';
+        const uniqueIntegrations = [...new Set(integrations)];
+        if (uniqueIntegrations.length > 0) {
+            p2 += ` These endpoints integrate with external services including ${uniqueIntegrations.slice(0, 4).join(', ')}.`;
+        }
+        paragraphs.push(p2);
+    }
+
+    // --- Paragraph 3: Frontend / UI description ---
+    if (componentDescriptions.length > 0 || pageDescriptions.length > 0) {
+        let p3 = 'On the frontend, ';
+        if (pageDescriptions.length > 0) {
+            p3 += `the application offers ${pageDescriptions.slice(0, 3).join(', ')}`;
+            if (componentDescriptions.length > 0) {
+                p3 += `, powered by reusable UI modules for ${componentDescriptions.slice(0, 4).join(', ')}`;
+            }
+        } else if (componentDescriptions.length > 0) {
+            p3 += `the UI is organized into dedicated modules for ${componentDescriptions.slice(0, 5).join(', ')}`;
+        }
+        p3 += '.';
+        paragraphs.push(p3);
+    }
+
+    // --- Paragraph 4: Engineering practices and architecture ---
+    const archNotes: string[] = [];
+    if (hasLib) archNotes.push('shared utility libraries for code reuse');
+    if (hasTypes) archNotes.push('explicit TypeScript type definitions for type safety');
+    if (hasHooks) archNotes.push('custom React hooks for state logic encapsulation');
+    if (files.some(f => /middleware\.(ts|js)$/.test(f.path))) archNotes.push('middleware for request interception');
+    if (files.some(f => /dockerfile|docker-compose/i.test(f.path))) archNotes.push('Docker configuration for containerized deployment');
+    if (files.some(f => f.path.includes('.github/workflows') || f.path.includes('.gitlab-ci'))) archNotes.push('CI/CD pipelines for automated deployment');
+    if (hasTests) archNotes.push('automated test coverage');
+    if (files.some(f => /electron/i.test(f.path)) || keyImports.has('electron')) archNotes.push('Electron packaging for cross-platform desktop distribution');
+    if (archNotes.length > 0) {
+        paragraphs.push(`The project demonstrates solid engineering practices with ${archNotes.slice(0, 4).join(', ')}.`);
+    }
+
+    // --- Paragraph 5: Code quality ---
+    if (complexity.score || errorCount > 0 || warningCount > 0) {
+        let p5 = 'In terms of code quality, ';
+        const parts: string[] = [];
+        if (complexity.score) parts.push(`the codebase scores ${complexity.score}/10 on complexity`);
+        if (errorCount > 0) parts.push(`${errorCount} potential issue${errorCount > 1 ? 's were' : ' was'} detected`);
+        if (warningCount > 0) parts.push(`${warningCount} warning${warningCount > 1 ? 's were' : ' was'} flagged`);
+        p5 += parts.join(', and ') + '.';
+        if (complexity.justification) p5 += ' ' + complexity.justification;
+        paragraphs.push(p5);
+    }
+
+    return paragraphs.join('\n\n');
+}
+
 function buildContext(files: { path: string; content: string }[]): string {
     const sourceExts = new Set(['ts', 'tsx', 'js', 'jsx', 'py', 'go', 'java', 'rs', 'cpp', 'c', 'vue', 'svelte']);
     const sorted = [...files].sort((a, b) => {
@@ -411,7 +714,7 @@ export async function analyzeCodebase(files: { path: string; content: string }[]
 
     const packageInfoRes = await packageInfoPromise;
 
-    let summary = `Analyzed ${filteredFiles.length} files with ${aiStepsSucceeded}/6 AI steps. Found ${detectedErrors.length} issues and ${detectedWarnings.length} warnings.`;
+    let summary = buildFallbackSummary(filteredFiles, techStack, complexity, detectedErrors.length, detectedWarnings.length);
     try {
         console.log("Step 6/6: Generating summary...");
         const summaryRes = await withRetry(() => model.generateContent(prompts.generateSummary({
@@ -691,7 +994,13 @@ async function analyzeCodebaseLocal(files: { path: string; content: string }[]) 
     if (languages.size === 0) languages.add('JavaScript');
 
     return {
-        summary: `Analyzed ${files.length} files. Detected ${languages.size} languages and ${frameworks.size} frameworks. Found ${qualityAnalysis.length} quality insights.`,
+        summary: buildFallbackSummary(
+            files,
+            { languages: Array.from(languages), frameworks: Array.from(frameworks), tools: Array.from(tools) },
+            { score: 5, justification: "Local analysis fallback — AI was unavailable for this step.", metrics: { totalFiles: files.length, totalLines } },
+            errors.length,
+            warnings.length
+        ),
         techStack: {
             languages: Array.from(languages),
             frameworks: Array.from(frameworks),

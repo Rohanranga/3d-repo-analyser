@@ -162,22 +162,39 @@ export function DetailedAnalysis({ data }: DetailedAnalysisProps) {
                         <tbody>
                             {(data.packages.all || [])
                                 .sort((a, b) => (a.status === 'outdated' ? -1 : 1))
-                                .map((pkg, i) => (
-                                    <motion.tr
-                                        key={i}
-                                        initial={{ opacity: 0, x: -8 }}
-                                        whileInView={{ opacity: 1, x: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: i * 0.03 }}
-                                        className="border-b border-white/5 hover:bg-white/5 transition-colors"
-                                    >
-                                        <td className="px-3 sm:px-4 py-3 font-mono text-primary text-xs sm:text-sm">{pkg.name}</td>
-                                        <td className="px-3 sm:px-4 py-3">
-                                            <span className="px-2 py-1 bg-white/5 rounded text-xs opacity-70">{pkg.current}</span>
-                                        </td>
-                                        <td className="px-3 sm:px-4 py-3 opacity-50 text-xs">{pkg.latest !== '-' ? pkg.latest : ''}</td>
-                                    </motion.tr>
-                                ))}
+                                .map((pkg, i) => {
+                                    const currentClean = pkg.current.replace(/[^0-9.]/g, '');
+                                    const latestClean = pkg.latest?.replace(/[^0-9.]/g, '') || '';
+                                    let displayLatest = pkg.latest;
+                                    if (displayLatest && displayLatest !== '-' && currentClean && latestClean) {
+                                        const cParts = currentClean.split('.').map(Number);
+                                        const lParts = latestClean.split('.').map(Number);
+                                        let currentIsHigher = false;
+                                        for (let j = 0; j < Math.max(cParts.length, lParts.length); j++) {
+                                            const c = cParts[j] || 0;
+                                            const l = lParts[j] || 0;
+                                            if (c > l) { currentIsHigher = true; break; }
+                                            if (c < l) break;
+                                        }
+                                        if (currentIsHigher) displayLatest = pkg.current;
+                                    }
+                                    return (
+                                        <motion.tr
+                                            key={i}
+                                            initial={{ opacity: 0, x: -8 }}
+                                            whileInView={{ opacity: 1, x: 0 }}
+                                            viewport={{ once: true }}
+                                            transition={{ delay: i * 0.03 }}
+                                            className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                                        >
+                                            <td className="px-3 sm:px-4 py-3 font-mono text-primary text-xs sm:text-sm">{pkg.name}</td>
+                                            <td className="px-3 sm:px-4 py-3">
+                                                <span className="px-2 py-1 bg-white/5 rounded text-xs opacity-70">{pkg.current}</span>
+                                            </td>
+                                            <td className="px-3 sm:px-4 py-3 opacity-50 text-xs">{displayLatest !== '-' ? displayLatest : ''}</td>
+                                        </motion.tr>
+                                    );
+                                })}
                         </tbody>
                     </table>
                 </div>

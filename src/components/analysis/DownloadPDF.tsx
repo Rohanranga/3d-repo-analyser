@@ -454,7 +454,18 @@ export function DownloadPDF({ data }: DownloadPDFProps) {
                     doc.setTextColor(...colors.muted);
                     doc.text(pkg.current, margin + contentWidth * 0.5, y + 4);
                     doc.setTextColor(...colors.text);
-                    doc.text(pkg.latest !== "-" ? pkg.latest : "", margin + contentWidth * 0.75, y + 4);
+                    let pdfLatest = pkg.latest;
+                    if (pdfLatest && pdfLatest !== "-") {
+                        const cParts = pkg.current.replace(/[^0-9.]/g, '').split('.').map(Number);
+                        const lParts = pdfLatest.replace(/[^0-9.]/g, '').split('.').map(Number);
+                        let cHigher = false;
+                        for (let j = 0; j < Math.max(cParts.length, lParts.length); j++) {
+                            if ((cParts[j] || 0) > (lParts[j] || 0)) { cHigher = true; break; }
+                            if ((cParts[j] || 0) < (lParts[j] || 0)) break;
+                        }
+                        if (cHigher) pdfLatest = pkg.current;
+                    }
+                    doc.text(pdfLatest !== "-" ? pdfLatest : "", margin + contentWidth * 0.75, y + 4);
                     y += 6.5;
                 }
                 y += 4;
