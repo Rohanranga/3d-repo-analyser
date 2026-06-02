@@ -695,7 +695,6 @@ This project is licensed under the Apache 2.0 License. See the LICENSE file for 
 
 | | Link |
 |---|------|
-| **GitHub** | [github.com/Rohanranga](https://github.com/Rohanranga) |
 | **Codesonar Custom GPT** | [CodeSonar Project Explainer](https://chatgpt.com/g/g-69f0670003f881919c845ae67d7dfd4e-codesonar-project-explainer) |
 | **Issues** | [Report a bug or request a feature](https://github.com/Rohanranga/3d-repo-analyser/issues) |
 
